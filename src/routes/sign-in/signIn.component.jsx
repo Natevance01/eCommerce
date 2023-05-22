@@ -1,13 +1,30 @@
-import { signInWithGooglePopup, createUserDocFromAuth } from '../../utils/firebase/firebase.utils.js'
+import { useEffect } from 'react'
+import { getRedirectResult } from 'firebase/auth'
+
+
+import { auth, signInWithGooglePopup, createUserDocFromAuth, signInWithGoogleRedirect } from '../../utils/firebase/firebase.utils.js'
+
+import SignUpForm from '../../components/sign-up-form/sign-up-form.component.jsx'
 
 const SignIn = () => {
 
+  useEffect(() => {
+
+    (async () => {
+      const response = await getRedirectResult(auth) 
+      console.log(response.user)
+      if (response) {
+        const userDocRef = await createUserDocFromAuth(response.user)
+      }
+    })()
+   
+  }, [])
+
   const logGoogleUser = async () => {
     const { user } = await signInWithGooglePopup();
-    const userDocRed = await createUserDocFromAuth(user)
-
-
+    const userDocRef = await createUserDocFromAuth(user)
   }
+ 
 
   return (
     <div>
@@ -15,6 +32,7 @@ const SignIn = () => {
       <button onClick={logGoogleUser}>
         Sign in Button
       </button>
+      <SignUpForm />
     </div>
 
   )
